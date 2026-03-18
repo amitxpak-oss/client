@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+@layer utilities {
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(-5deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(-5deg);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .card-animate {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .card-animate:nth-child(1) { animation-delay: 0.1s; }
+  .card-animate:nth-child(2) { animation-delay: 0.2s; }
+  .card-animate:nth-child(3) { animation-delay: 0.3s; }
+  .card-animate:nth-child(4) { animation-delay: 0.4s; }
+  .card-animate:nth-child(5) { animation-delay: 0.5s; }
+  .card-animate:nth-child(6) { animation-delay: 0.6s; }
+}
+
+/* Desktop specific adjustments */
+@media (min-width: 1024px) {
+  .card-animate:nth-child(odd) { animation-delay: 0.1s; }
+  .card-animate:nth-child(even) { animation-delay: 0.2s; }
+}
+
+/* Form Styles - Red Theme */
+.input-field-red {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  transition: all 0.3s ease;
+}
+
+.input-field-red:focus {
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  outline: none;
+}
+
+.input-field-red::placeholder {
+  color: #9CA3AF;
+}
+
+.gradient-header-red {
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+}
+
+.gradient-btn-red {
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+  transition: all 0.3s ease;
+}
+
+.gradient-btn-red:hover {
+  background: linear-gradient(135deg, #B91C1C 0%, #991B1B 100%);
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.gradient-btn-red:active {
+  transform: scale(0.98);
+}
+
+.active-red {
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.completed-red {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
