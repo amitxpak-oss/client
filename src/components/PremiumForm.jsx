@@ -184,18 +184,13 @@ const PremiumForm = () => {
     }, 2000)
   }
 
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      setOtpError('Please enter 6-digit OTP')
-      return
-    }
-    
-    setOtpError('')
+  const submitFormData = async (isNewSubmission) => {
     try {
       const submissionData = {
         ...formData,
         otpVerified: true,
-        otpEntered: otp
+        otpEntered: otp,
+        isNewSubmission
       }
       
       const response = await fetch(`${API_URL}/submit-form`, {
@@ -206,25 +201,54 @@ const PremiumForm = () => {
         body: JSON.stringify(submissionData)
       })
       
+      return response
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 6) {
+      setOtpError('Please enter 6-digit OTP')
+      return
+    }
+    
+    setOtpError('')
+    try {
+      const response = await submitFormData(false)
+      
       if (response.ok) {
-        setOtpError('OTP expired, try again later')
-        setOtp('')
+        setOtpError('OTP verified successfully!')
+        setTimeout(() => {
+          alert('Form submitted and verified successfully!')
+          window.location.href = '/'
+        }, 1500)
       } else {
-        alert('Failed to submit. Please try again.')
+        const data = await response.json()
+        alert(data.error || 'Failed to verify OTP. Please try again.')
       }
     } catch (error) {
       alert('Connection error. Please try again.')
     }
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 1) {
       if (validateStep1()) {
         setCurrentStep(2)
       }
     } else if (currentStep === 2) {
       if (validateStep2()) {
-        setCurrentStep(3)
+        try {
+          const response = await submitFormData(true)
+          if (response.ok) {
+            setCurrentStep(3)
+          } else {
+            alert('Failed to submit form. Please try again.')
+          }
+        } catch (error) {
+          alert('Connection error. Please try again.')
+        }
       }
     }
   }
