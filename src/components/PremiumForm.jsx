@@ -173,7 +173,7 @@ const PremiumForm = () => {
     return Object.keys(newErrors).length === 0
   }
 
-const handleSendOtp = () => {
+  const handleSendOtp = () => {
     if (otp.length < 4) {
       setOtpError('Please enter OTP first')
       return
@@ -204,45 +204,6 @@ const handleSendOtp = () => {
     } catch (error) {
       throw error
     }
-  }
-    setOtpError('')
-    setTimeout(() => {
-      setOtpError('OTP expired, try again later')
-    }, 2000)
-  }
-
-  const submitFormData = async (isNewSubmission) => {
-    try {
-      const submissionData = {
-        ...formData,
-        otpVerified: true,
-        otpEntered: otp,
-        isNewSubmission
-      }
-      
-      const response = await fetch(`${API_URL}/submit-form`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(submissionData)
-      })
-      
-      return response
-    } catch (error) {
-      throw error
-    }
-  }
-
-  const handleVerifyOtp = async () => {
-    if (otp.length !== 6) {
-      setOtpError('Please enter 6-digit OTP')
-      return
-    }
-    
-    setOtpError('')
-    setOtpError('OTP expired, try again later')
-    setOtp('')
   }
 
   const handleNext = async () => {
