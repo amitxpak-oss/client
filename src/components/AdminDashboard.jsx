@@ -24,6 +24,8 @@ const AdminDashboard = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [passwordSuccess, setPasswordSuccess] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 50
 
   useEffect(() => {
     const savedToken = localStorage.getItem('adminToken')
@@ -492,7 +494,7 @@ const AdminDashboard = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {loading ? (<tr><td colSpan="7" className="px-4 py-6 sm:py-8 text-center text-gray-500 text-sm">Loading...</td></tr>) : filteredSubmissions.length === 0 ? (<tr><td colSpan="7" className="px-4 py-6 sm:py-8 text-center text-gray-500 text-sm">No submissions found</td></tr>) : (
-                        filteredSubmissions.map((sub) => (
+                        filteredSubmissions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((sub) => (
                           <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600">#{sub.id}</td>
                             <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-800 truncate max-w-[80px] sm:max-w-[120px]">{sub.full_name}</td>
@@ -507,6 +509,38 @@ const AdminDashboard = () => {
                     </tbody>
                   </table>
                 </div>
+                {filteredSubmissions.length > itemsPerPage && (
+                  <div className="px-4 py-3 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <p className="text-xs sm:text-sm text-gray-500">
+                      Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredSubmissions.length)} of {filteredSubmissions.length}
+                    </p>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      >
+                        Prev
+                      </button>
+                      {Array.from({ length: Math.ceil(filteredSubmissions.length / itemsPerPage) }, (_, i) => i + 1).slice(Math.max(0, currentPage - 3), Math.min(Math.ceil(filteredSubmissions.length / itemsPerPage), currentPage + 2)).map(page => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm border rounded-lg ${currentPage === page ? 'bg-red-600 text-white border-red-600' : 'border-gray-200 hover:bg-gray-50'}`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(Math.ceil(filteredSubmissions.length / itemsPerPage), prev + 1))}
+                        disabled={currentPage === Math.ceil(filteredSubmissions.length / itemsPerPage)}
+                        className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
