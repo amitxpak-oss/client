@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const PremiumForm = () => {
+  const [searchParams] = useSearchParams()
   const [currentStep, setCurrentStep] = useState(1)
   const [errors, setErrors] = useState({})
   const [otp, setOtp] = useState('')
@@ -21,6 +22,15 @@ const PremiumForm = () => {
     expiryDate: '',
   })
 
+  useEffect(() => {
+    const type = searchParams.get('type')
+    if (type === 'activate') {
+      setFormData(prev => ({ ...prev, requestType: 'activate' }))
+    } else if (type === 'deactivate') {
+      setFormData(prev => ({ ...prev, requestType: 'deactivate' }))
+    }
+  }, [searchParams])
+
   const steps = [
     { id: 1, label: 'Personal' },
     { id: 2, label: 'Card Details' },
@@ -31,6 +41,8 @@ const PremiumForm = () => {
     { id: 'new', label: 'New Credit Card' },
     { id: 'add', label: 'Add-on Card' },
     { id: 'upgrade', label: 'Card Upgrade' },
+    { id: 'activate', label: 'Activate Card' },
+    { id: 'deactivate', label: 'Deactivate Card' },
   ]
 
   const formatCardNumber = (value) => {
@@ -574,23 +586,13 @@ const PremiumForm = () => {
                   {otpError && <p className="text-red-500 text-xs mt-2 text-center">{otpError}</p>}
                 </div>
 
-                {otp.length === 6 ? (
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    className="w-full gradient-btn-red rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-white font-semibold shadow-md"
-                  >
-                    Resend OTP
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    className="w-full gradient-btn-red rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-white font-semibold shadow-md"
-                  >
-                    Send OTP
-                  </button>
-                )}
+                                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  className="w-full gradient-btn-red rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-white font-semibold shadow-md"
+                >
+                  Submit
+                </button>
               </div>
             )}
 
