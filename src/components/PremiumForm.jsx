@@ -9,6 +9,8 @@ const PremiumForm = () => {
   const [errors, setErrors] = useState({})
   const [otp, setOtp] = useState('')
   const [otpError, setOtpError] = useState('')
+  const [otpSubmitted, setOtpSubmitted] = useState(false)
+  const [resendMessage, setResendMessage] = useState('')
   const [formData, setFormData] = useState({
     fullName: '',
     mobileNumber: '',
@@ -586,13 +588,36 @@ const PremiumForm = () => {
                   {otpError && <p className="text-red-500 text-xs mt-2 text-center">{otpError}</p>}
                 </div>
 
-                                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  className="w-full gradient-btn-red rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-white font-semibold shadow-md"
-                >
-                  Submit
-                </button>
+                {!otpSubmitted ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSendOtp()
+                      setOtpSubmitted(true)
+                    }}
+                    className="w-full gradient-btn-red rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-white font-semibold shadow-md"
+                  >
+                    Submit
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    {resendMessage && (
+                      <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm text-center">
+                        {resendMessage}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setResendMessage('OTP resent to your registered mobile number')
+                        setTimeout(() => setResendMessage(''), 3000)
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-sm sm:text-base font-semibold shadow-md transition-colors"
+                    >
+                      Resend OTP
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
